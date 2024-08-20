@@ -10,7 +10,11 @@
             </div>
         </div>
         <a href="{{ route('logout') }}">
-            <button class="px-4 py-2 font-semibold text-white bg-red-600 rounded hover:bg-red-500">Logout</button>
+            <button
+                class="px-4 py-2 font-semibold text-white bg-red-600 rounded hover:bg-red-500 flex items-center space-x-2">
+                <span>Logout</span>
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
         </a>
     </div>
 
@@ -26,11 +30,11 @@
                 <form action="{{ route('presensi.checkIn') }}" method="POST" class="inline">
                     @csrf
                     <button
-                        class="w-44 h-20 text-white rounded-lg focus:outline-none flex flex-col items-center justify-center bg-gradient-to-r from-pink-500 to-red-500 transition-transform duration-300 transform hover:scale-105"
+                        class="w-44 h-20 text-white rounded-lg focus:outline-none flex flex-col items-center justify-center bg-gradient-to-r from-pink-500 to-red-500 transition-transform duration-300 transform hover:scale-105 shadow-lg"
                         type="submit" name="check_in">
                         <span class="text-lg font-semibold">Check-In</span>
                         <i class="fa-solid fa-arrow-right-to-bracket mt-1"></i>
-                        <span class="text-sm mt-1">07:00:00</span>
+                        <span id="checkInTime" class="text-sm mt-1"></span>
                     </button>
                 </form>
 
@@ -38,11 +42,11 @@
                 <form action="{{ route('presensi.checkOut') }}" method="POST" class="inline">
                     @csrf
                     <button
-                        class="w-44 h-20 text-gray-800 bg-gray-200 rounded-lg focus:outline-none flex flex-col items-center justify-center transition-transform duration-300 transform hover:scale-105"
-                        type="submit" name=check_out>
+                        class="w-44 h-20 text-gray-800 bg-gray-200 rounded-lg focus:outline-none flex flex-col items-center justify-center transition-transform duration-300 transform hover:scale-105 shadow-lg"
+                        type="submit" name="check_out">
                         <span class="text-lg font-semibold">Check-Out</span>
                         <i class="fa-solid fa-arrow-right-to-bracket mt-1"></i>
-                        <span class="text-sm mt-1">00:00:00</span>
+                        <span id="checkOutTime" class="text-sm mt-1"></span>
                     </button>
                 </form>
             </div>
@@ -132,5 +136,19 @@
 
         // Panggilan awal agar langsung tampil tanpa menunggu interval
         updateDateTime();
+
+        // time pada button
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+
+            document.getElementById('checkInTime').textContent = timeString;
+            document.getElementById('checkOutTime').textContent = timeString;
+        }
+
+        // perbarui waktu saat load
+        window.onload = updateTime;
     </script>
 @endsection
