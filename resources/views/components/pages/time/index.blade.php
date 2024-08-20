@@ -66,6 +66,7 @@
                             <th class="px-6 py-3">Waktu Check Out</th>
                             <th class="px-6 py-3">Status</th>
                             <th class="px-6 py-3">Alasan</th>
+                            <th class="px-6 py-3">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -77,6 +78,19 @@
                                 <td class="px-6 py-4">{{ $attendance->check_out }}</td>
                                 <td class="px-6 py-4">{{ $attendance->status }}</td>
                                 <td class="px-6 py-4">{{ $attendance->notes }}</td>
+                                <td class="px-6 py-4">
+                                    <form class="inline-block" action="{{ route('presensi.delete', $attendance->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded inline-flex items-center"
+                                            onclick="return confirm('Apakah Anda yakin ingin menghapus form ini?')">
+                                            <i class="fa-solid fa-trash-can mr-2"></i>
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

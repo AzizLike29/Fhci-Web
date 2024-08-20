@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,7 +29,7 @@ class PresensiController extends Controller
 
         $attendance = Attendance::firstOrCreate(
             ['user_id' => $user->id, 'date' => $now->toDateString()],
-            ['check_in' => $now->toTimeString(), 'status' => 'Hadir', 'alasan' => '-']
+            ['check_in' => $now->toTimeString(), 'status' => 'Hadir', 'notes' => '-']
         );
 
         // Redirect ke halaman presensi setelah check-in berhasil
@@ -37,7 +38,11 @@ class PresensiController extends Controller
 
     public function checkOut(Request $request)
     {
-        $user = Auth::check() ? Auth::user() : null;
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
+        }
+
+        $user = Auth::user();
         $now = Carbon::now();
 
         $attendance = Attendance::where('user_id', $user->id)
@@ -46,16 +51,22 @@ class PresensiController extends Controller
 
         if ($attendance) {
             $attendance->update(['check_out' => $now->toTimeString()]);
-            // Redirect ke halaman presensi setelah check-out berhasil
             return redirect()->route('presensi.index')->with('message', 'Check-out berhasil');
         } else {
             Attendance::create([
                 'user_id' => $user->id,
                 'date' => $now->toDateString(),
                 'check_out' => $now->toTimeString(),
-                'status' => 'Tidak Hadir'
+                'status' => 'Tidak Hadir',
             ]);
             return redirect()->route('presensi.index')->with('error', 'Tidak ada check-in hari ini, status diatur ke Tidak Hadir.');
         }
+    }
+
+    public function delete_check($id)
+    {
+        DB::table('attendances')->where('id', $id)->delete();
+
+        return redirect()->route('presensi.index')->with('success', 'Delete berhasil!');
     }
 }

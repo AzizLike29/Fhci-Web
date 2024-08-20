@@ -40,3 +40,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/absence', [AbsenceController::class, 'store'])->name('absence.store');
     Route::get('/report', [ReportController::class, 'index'])->name('report.index');
 });
+
+// delete
+Route::delete('/presensi/{id}/delete', [PresensiController::class, 'delete_check'])->name('presensi.delete');
