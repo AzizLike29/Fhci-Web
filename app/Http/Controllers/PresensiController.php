@@ -28,7 +28,7 @@ class PresensiController extends Controller
 
         $attendance = Attendance::firstOrCreate(
             ['user_id' => $user->id, 'date' => $now->toDateString()],
-            ['check_in' => $now->toTimeString(), 'status' => 'Hadir']
+            ['check_in' => $now->toTimeString(), 'status' => 'Hadir', 'alasan' => '-']
         );
 
         // Redirect ke halaman presensi setelah check-in berhasil
@@ -48,9 +48,14 @@ class PresensiController extends Controller
             $attendance->update(['check_out' => $now->toTimeString()]);
             // Redirect ke halaman presensi setelah check-out berhasil
             return redirect()->route('presensi.index')->with('message', 'Check-out berhasil');
+        } else {
+            Attendance::create([
+                'user_id' => $user->id,
+                'date' => $now->toDateString(),
+                'check_out' => $now->toTimeString(),
+                'status' => 'Tidak Hadir'
+            ]);
+            return redirect()->route('presensi.index')->with('error', 'Tidak ada check-in hari ini, status diatur ke Tidak Hadir.');
         }
-
-        // Redirect ke halaman presensi dengan pesan error jika tidak ada check-in
-        return redirect()->route('presensi.index')->with('error', 'Tidak ada check-in hari ini');
     }
 }

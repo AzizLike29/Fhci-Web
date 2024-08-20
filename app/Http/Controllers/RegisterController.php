@@ -11,7 +11,7 @@ class RegisterController extends Controller
     {
         return view('components.pages.register');
     }
-    
+
     public function register(Request $request)
     {
         User::create([
