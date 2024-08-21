@@ -13,10 +13,11 @@
                     <select
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="reason" name="reason" required>
-                        <option class="text-gray-500" value="">Pilih Keterangan</option>
+                        <option class="text-gray-500" value="" selected disabled>Pilih Keterangan</option>
                         <option value="izin">Izin</option>
                         <option value="sakit">Sakit</option>
                     </select>
+                    <small id="dangerSelectReason" class="text-red-500"></small>
                 </div>
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-bold mb-2" for="notes">
@@ -25,6 +26,7 @@
                     <textarea
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="notes" name="notes" required></textarea>
+                    <small id="dangerFieldNotes" class="text-red-500"></small>
                 </div>
                 <div class="mx-3 flex items-center justify-center space-x-4">
                     <a href="{{ route('presensi.index') }}">
@@ -49,19 +51,41 @@
 @section('scripts')
     <script>
         document.getElementById("submitForm").addEventListener("click", function(event) {
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Laporan Berhasil Terkirim!",
-                toast: true,
-                showConfirmButton: false,
-                timer: 1500,
-                customClass: {
-                    popup: 'mt-6'
-                }
-            }).then(() => {
-                document.querySelector("form").submit();
-            });
+            event.preventDefault();
+
+            const reason = document.getElementById('reason').value;
+            const notes = document.getElementById('notes').value;
+
+            document.getElementById('dangerSelectReason').textContent = '';
+            document.getElementById('dangerFieldNotes').textContent = '';
+
+            let isValid = true;
+
+            if (reason === '') {
+                document.getElementById('dangerSelectReason').textContent = 'Pilih keterangan terlebih dahulu.';
+                isValid = false;
+            }
+
+            if (notes.trim() === '') {
+                document.getElementById('dangerFieldNotes').textContent = 'Catatan tidak boleh kosong.';
+                isValid = false;
+            }
+
+            if (isValid) {
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Laporan Berhasil Terkirim!",
+                    toast: true,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                        popup: 'mt-6'
+                    }
+                }).then(() => {
+                    event.target.closest('form').submit();
+                });
+            }
         });
     </script>
 @endsection
