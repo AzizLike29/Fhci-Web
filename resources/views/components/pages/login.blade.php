@@ -14,12 +14,14 @@
                     <input type="email" id="email" placeholder="Masukan Email"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
                         name="email" required>
+                    <small id="dangerEmail" class="text-red-500"></small>
                 </div>
                 <div class="mb-6 relative">
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
                     <input type="password" id="password" placeholder="Masukan Password"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500"
                         name="password" required>
+                    <small id="dangerPassword" class="text-red-500"></small>
                 </div>
                 <button type="submit" id="loginBtn"
                     class="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-300">Masuk</button>
@@ -34,19 +36,52 @@
 
 @section('scripts')
     <script>
-        document.getElementById("loginBtn").addEventListener("click", function(event) {
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "Login berhasil!",
-                toast: true,
-                showConfirmButton: false,
-                timer: 1500,
-                customClass: {
-                    popup: 'mt-6'
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("loginBtn").addEventListener("click", function(event) {
+                event.preventDefault();
+
+                const email = document.getElementById('email');
+                const password = document.getElementById('password');
+
+                let isValid = true;
+
+                if (email.value.trim() === '') {
+                    document.getElementById('dangerEmail').textContent = 'Silakan isi email anda!';
+                    isValid = false;
+                } else {
+                    document.getElementById('dangerEmail').textContent = '';
                 }
-            }).then(() => {
-                document.querySelector("form").submit();
+
+                if (password.value.trim() === '') {
+                    document.getElementById('dangerPassword').textContent = 'Silakan isi password anda!';
+                    isValid = false;
+                } else {
+                    document.getElementById('dangerPassword').textContent = '';
+                }
+
+                if (isValid) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Login berhasil!",
+                        toast: true,
+                        showConfirmButton: false,
+                        timer: 1500,
+                        customClass: {
+                            popup: 'mt-6'
+                        }
+                    }).then(() => {
+                        event.target.closest('form').submit();
+                    });
+                }
+            });
+
+            document.getElementById('email').addEventListener('input', function() {
+                document.getElementById('dangerEmail').textContent = '';
+            });
+
+            document.getElementById('password').addEventListener('input', function() {
+                document.getElementById('dangerPassword').textContent = '';
             });
         });
     </script>
