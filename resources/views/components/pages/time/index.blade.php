@@ -3,7 +3,17 @@
 @section('content')
     <div class="flex items-center justify-between p-6 bg-white shadow-md">
         <div class="flex items-center">
-            <img class="w-16 h-16 rounded-full" src="https://randomuser.me/api/portraits/men/9.jpg" alt="{{ $user->name }}">
+            @php
+                $hash = crc32($user->name);
+                $seed = $hash % 100;
+                //  akan menghasilkan 0 atau 1.
+                // Jika hasilnya 0, $gender akan berisi 'men', jika 1 maka 'women'.
+                // array dengan dua elemen.
+                $gender = ['men', 'women'][$hash % 2];
+            @endphp
+            <img class="w-16 h-16 rounded-full"
+                src="https://randomuser.me/api/portraits/{{ $gender }}/{{ $seed }}.jpg"
+                alt="{{ $user->name }}">
             <div class="ml-4">
                 <h2 class="text-xl font-semibold text-gray-800">{{ $user->name }}</h2>
                 <p class="text-gray-600">{{ $user->email }}</p>
