@@ -61,6 +61,7 @@
                 const password = document.getElementById('password');
                 const password_confirm = document.getElementById('password_confirm');
 
+                // validasi input tidak boleh kosong/wajib di isi
                 let isValid = true;
 
                 if (nama.value.trim() === '') {
@@ -92,6 +93,7 @@
                     document.getElementById('dangerConfirmationPassword').textContent = '';
                 }
 
+                // menampilkan pesan sukses
                 if (isValid) {
                     Swal.fire({
                         position: "top-end",
@@ -109,6 +111,7 @@
                 }
             });
 
+            // validasi hilang disaat mengisi input
             document.getElementById('nama').addEventListener('input', function() {
                 document.getElementById('dangerName').textContent = '';
             });

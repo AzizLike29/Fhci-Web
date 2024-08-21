@@ -43,6 +43,7 @@
                 const email = document.getElementById('email');
                 const password = document.getElementById('password');
 
+                // validasi input tidak boleh kosong/wajib di isi
                 let isValid = true;
 
                 if (email.value.trim() === '') {
@@ -59,6 +60,7 @@
                     document.getElementById('dangerPassword').textContent = '';
                 }
 
+                // menampilkan pesan sukses
                 if (isValid) {
                     Swal.fire({
                         position: "top-end",
@@ -76,6 +78,7 @@
                 }
             });
 
+            // validasi hilang disaat mengisi input
             document.getElementById('email').addEventListener('input', function() {
                 document.getElementById('dangerEmail').textContent = '';
             });

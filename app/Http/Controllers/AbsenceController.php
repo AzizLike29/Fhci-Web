@@ -22,8 +22,19 @@ class AbsenceController extends Controller
             'notes' => 'required|string|max:255',
         ]);
 
-        $user = !Auth::check() ? null : Auth::user();
+        $user = Auth::user();
         $now = Carbon::now();
+
+        $existingAttendance = Attendance::where('user_id', $user->id)
+            ->whereDate('date', $now->toDateString())
+            ->first();
+
+        if ($existingAttendance) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ketidakhadiran hari ini sudah dilaporkan.'
+            ], 422);
+        }
 
         Attendance::create([
             'user_id' => $user->id,
@@ -32,6 +43,9 @@ class AbsenceController extends Controller
             'notes' => $request->notes,
         ]);
 
-        return redirect()->route('presensi.index')->with('success', 'Ketidakhadiran berhasil dilaporkan');
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Ketidakhadiran berhasil dilaporkan'
+        ]);
     }
 }

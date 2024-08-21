@@ -59,6 +59,7 @@
             document.getElementById('dangerSelectReason').textContent = '';
             document.getElementById('dangerFieldNotes').textContent = '';
 
+            // validasi input tidak boleh kosong/wajib di isi
             let isValid = true;
 
             if (reason === '') {
@@ -71,20 +72,72 @@
                 isValid = false;
             }
 
+            // validasi hilang disaat mengisi input
+            document.getElementById('reason').addEventListener('input', function() {
+                document.getElementById('dangerSelectReason').textContent = '';
+            });
+
+            document.getElementById('notes').addEventListener('input', function() {
+                document.getElementById('dangerFieldNotes').textContent = '';
+            });
+
+            // menangkap validasi di backend
             if (isValid) {
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Laporan Berhasil Terkirim!",
-                    toast: true,
-                    showConfirmButton: false,
-                    timer: 1500,
-                    customClass: {
-                        popup: 'mt-6'
-                    }
-                }).then(() => {
-                    event.target.closest('form').submit();
-                });
+                const form = event.target.closest('form');
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: data.message,
+                                toast: true,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                customClass: {
+                                    popup: 'mt-6'
+                                }
+                            }).then(() => {
+                                window.location.href = '{{ route('presensi.index') }}';
+                            });
+                        } else {
+                            Swal.fire({
+                                position: "top-end",
+                                icon: "error",
+                                title: data.message,
+                                toast: true,
+                                showConfirmButton: false,
+                                timer: 1500,
+                                customClass: {
+                                    popup: 'mt-6'
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            position: "top-end",
+                            icon: "error",
+                            title: "Terjadi kesalahan. Silakan coba lagi.",
+                            toast: true,
+                            showConfirmButton: false,
+                            timer: 1500,
+                            customClass: {
+                                popup: 'mt-6'
+                            }
+                        });
+                    });
             }
         });
     </script>
